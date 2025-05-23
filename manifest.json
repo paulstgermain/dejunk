@@ -1,6 +1,6 @@
 {
   "name": "Dejunk",
-  "description": "Base Level Extension",
+  "description": "Dejunkify the internet by removing junk content (promoted or otherwise unrelated content to a page's specific purpose) from websites.",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
@@ -9,8 +9,12 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://*.quora.com/*", "https://www.quora.com/*"],
+      "matches": ["https://*.quora.com/*", "https://www.quora.com/*", "https://*.reddit.com/*"],
       "js": ["scripts/content.js"]
     }
-  ]
+  ],
+  "host_permissions": [
+  "https://*.quora.com/*",
+  "https://*.reddit.com/*"
+]
 }
