@@ -1,17 +1,21 @@
-// Hide all promoted answers on Quora.
-const elements = document.querySelectorAll('.dom_annotate_ad_promoted_answer');
-elements.forEach((el) => el.style.display = 'none');
+// Hide all 'promoted' content on Quora & Reddit.
+function hideTargetElements() {
+  const elements = document.querySelectorAll('.dom_annotate_ad_promoted_answer, .promotedlink');
 
-// Theory: This code hides 'Related' answers on Quora.
-// Currently it hides all answers containing the word 'Related', too. Commented out for now.
+  elements.forEach((el) => {
+    el.style.display = 'none';
+  });
+}
 
-// const spans = document.querySelectorAll('span');
+// Initial run
+hideTargetElements();
 
-// spans.forEach(span => {
-//   if (span.textContent.includes('Related')) {
-//     const parent = span.closest('div');
-//     if (parent) {
-//       parent.style.display = 'none'
-//     }
-//   }
-// });
+// Watch for dynamic content
+const observer = new MutationObserver(() => {
+  hideTargetElements();
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
+});
