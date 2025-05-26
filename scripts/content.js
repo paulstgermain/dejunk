@@ -1,49 +1,83 @@
 function hidePromotedRedditContent(enabled) {
-  if (enabled) {
-    // Hide all 'promoted' content on Reddit
-    const elements = document.querySelectorAll('.promotedlink');
-    elements.forEach((el) => {
-      el.style.display = 'none';
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ hidePromotedRedditContent: true }, () => {
+      console.log('Reddit promoted content hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ hidePromotedRedditContent: false }, () => {
+      console.log('Reddit promoted content hiding disabled');
     });
   }
 }
 
 function hideSponsoredQuoraContent(enabled) {
-  if (enabled) {
-    // Hide all 'promoted' content on Quora
-    const elements = document.querySelectorAll('.dom_annotate_ad_promoted_answer');
-    elements.forEach((el) => {
-      el.style.display = 'none';
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ hideSponsoredQuoraContent: true }, () => {
+      console.log('Quora sponsored content hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ hideSponsoredQuoraContent: false }, () => {
+      console.log('Quora sponsored content hiding disabled');
     });
   }
 }
 
+// Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'reddit') {
+  if (message.type === 'hidePromotedRedditContent') {
     hidePromotedRedditContent(message.enabled);
-  } else if (message.type === 'quora') {
+  } else if (message.type === 'hideSponsoredQuoraContent') {
     hideSponsoredQuoraContent(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
 
-// Hide all 'promoted' content on Quora & Reddit.
-// function hideTargetElements() {
-//   const elements = document.querySelectorAll('.dom_annotate_ad_promoted_answer, .promotedlink');
+function hideTargetElements() {
+  // Check user preferences in local storage for hiding content, 
+  // and hide elements accordingly.
 
-//   elements.forEach((el) => {
-//     el.style.display = 'none';
-//   });
-// }
+  // Check if local storage is available
+  if (!chrome || !chrome.storage || !chrome.storage.local) {
+    console.error('Chrome storage API is not available.');
+    return;
+  }
 
-// Initial run
-// hideTargetElements();
+  // Get user preferences for hiding content
+  chrome.storage.local.get(['hidePromotedRedditContent', 'hideSponsoredQuoraContent'], (result) => {
 
-// Watch for dynamic content
+    if (result.hidePromotedRedditContent === true) {
+      // Hide all 'promoted' content on Reddit
+      const elements = document.querySelectorAll('.promotedlink');
+      elements.forEach((el) => {
+        el.style.display = 'none';
+      });
+    } else if (result.hidePromotedRedditContent === false) {
+      // If the user has disabled hiding promoted content, do nothing
+      return;
+    }
+
+    if (result.hideSponsoredQuoraContent === true) {
+       // Hide all 'sponsored' content on Quora
+      const elements = document.querySelectorAll('.dom_annotate_ad_promoted_answer');
+      elements.forEach((el) => {
+        el.style.display = 'none';
+      });
+    } else if (result.hideSponsoredQuoraContent === false) {
+      // If the user has disabled hiding sponsored content, do nothing
+      return;
+    }
+  });
+}
+
+// Initial run on page load
+// Hide elements based on user preferences when the content script is loaded
+hideTargetElements();
+
+// Use MutationObserver to watch for changes in the DOM and hide elements accordingly
 const observer = new MutationObserver(() => {
-  // hideTargetElements();
-  hidePromotedRedditContent(true);
-  hideSponsoredQuoraContent(true);
+  hideTargetElements();
 });
 
 observer.observe(document.body, {
