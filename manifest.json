@@ -13,6 +13,10 @@
       "js": ["scripts/content.js"]
     }
   ],
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
   "host_permissions": [
   "https://*.quora.com/*",
   "https://*.reddit.com/*"
