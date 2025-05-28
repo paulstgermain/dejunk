@@ -31,6 +31,12 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
   // to toggle content hiding preferences
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener('change', (event) => {
+      // Check if refresh message already exists, if not, create it
+      let refreshMsg = document.getElementById('refresh-msg');
+      if (!refreshMsg) {
+        document.body.insertAdjacentHTML("beforeend", "<hr /><h3 id='refresh-msg'>Refresh page to see changes.</h3>");
+      }
+      // Send message to content script to save user preferences
       chrome.tabs.sendMessage(tabs[0].id, { type: checkbox.id, enabled: event.target.checked });
     })
   })
