@@ -2,10 +2,12 @@
 chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
   // Get all checkboxes in the popup
   const checkboxes = document.querySelectorAll("input[type='checkbox']");
+  const sliderLabels = document.querySelectorAll("p.slider-label");
 
   // If no active tab with manifest-allowed url, disable all checkboxes and display a message
   if (!tabs[0].url) {
     checkboxes.forEach((checkbox) => checkbox.disabled = true);
+    sliderLabels.forEach((label) => label.className = "slider-label disabled");
     document.body.insertAdjacentHTML("beforeend", "<h3>This site not currently supported by Dejunk.</h3>");
   }
 
