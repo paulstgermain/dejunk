@@ -56,6 +56,18 @@ body {
   transition: .4s;
 }
 
+input:disabled + .slider {
+  background-color: #ccc;
+}
+
+input:disabled:checked + .slider {
+  background-color: #ccc;
+}
+
+.disabled {
+  color: #ccc;
+}
+
 input:checked + .slider {
   background-color: #23c91a;
 }
