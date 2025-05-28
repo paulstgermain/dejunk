@@ -6,14 +6,42 @@ body {
   margin: 0;
   padding-bottom: 12px;
   width: 300px;
-  border: 1px solid black;
+}
+
+h1 {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+hr {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
 }
 
 .slider-label {
   display: inline-block;
-  /* line-height: 30px; */
   font-size: 16px;
   font-weight: bold;
+  margin: 0;
+}
+
+.toggle-section {
+  width: 100%;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 95%;
+  padding: 0 5px;
+}
+
+.toggle-row p {
+  margin: 0;
+  font-size: 14px;
 }
 
 .switch {
@@ -62,10 +90,6 @@ input:disabled + .slider {
 
 input:disabled:checked + .slider {
   background-color: #ccc;
-}
-
-.disabled {
-  color: #ccc;
 }
 
 input:checked + .slider {
