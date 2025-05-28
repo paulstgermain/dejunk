@@ -1,4 +1,4 @@
-# Dejunk
+# ![alt text](/images/icon48.png "Dejunk Icon") Dejunk
 Dejunkify the internet by removing junk content (promoted or otherwise unrelated content to a page's specific purpose) from websites.
 
 ## Table of Contents
