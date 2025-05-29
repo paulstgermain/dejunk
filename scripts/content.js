@@ -24,12 +24,27 @@ function hideSponsoredQuoraContent(enabled) {
   }
 }
 
+function hideYoutubeShorts(enabled) {
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ hideYoutubeShorts: true }, () => {
+      console.log('Youtube shorts hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ hideYoutubeShorts: false }, () => {
+      console.log('Youtube shorts hiding disabled');
+    });
+  }
+}
+
 // Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'hidePromotedRedditContent') {
     hidePromotedRedditContent(message.enabled);
   } else if (message.type === 'hideSponsoredQuoraContent') {
     hideSponsoredQuoraContent(message.enabled);
+  } else if (message.type === 'hideYoutubeShorts') {
+    hideYoutubeShorts(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
@@ -45,9 +60,10 @@ function hideTargetElements() {
   }
 
   // Get user preferences for hiding content
-  chrome.storage.local.get(['hidePromotedRedditContent', 'hideSponsoredQuoraContent'], (result) => {
+  chrome.storage.local.get(['hidePromotedRedditContent', 'hideSponsoredQuoraContent', 'hideYoutubeShorts'], (result) => {
+    console.log('User preferences:', result.hideYoutubeShorts);
 
-    if (result.hidePromotedRedditContent === true) {
+    if (location.href.includes('reddit.com') && result.hidePromotedRedditContent === true) {
       // Hide all 'promoted' content on Reddit
       const elements = document.querySelectorAll('.promotedlink');
       elements.forEach((el) => {
@@ -58,7 +74,7 @@ function hideTargetElements() {
       return;
     }
 
-    if (result.hideSponsoredQuoraContent === true) {
+    if (location.href.includes('quora.com') && result.hideSponsoredQuoraContent === true) {
        // Hide all 'sponsored' content on Quora
       const elements = document.querySelectorAll('.dom_annotate_ad_promoted_answer');
       elements.forEach((el) => {
@@ -68,6 +84,18 @@ function hideTargetElements() {
       // If the user has disabled hiding sponsored content, do nothing
       return;
     }
+
+    if (location.href.includes('youtube.com') && result.hideYoutubeShorts === true) {
+      // Hide all shorts sections on Youtube
+      const elements = document.querySelectorAll('ytd-reel-shelf-renderer');
+      elements.forEach((el) => {
+        el.style.display = 'none';
+      })
+    } else if (result.hideYoutubeShorts === false) {
+      // If the user has disabled hiding Youtube Shorts, do nothing
+      return;
+    }
+
   });
 }
 
