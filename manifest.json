@@ -13,7 +13,7 @@
     },
   "content_scripts": [
     {
-      "matches": ["https://*.quora.com/*", "https://www.quora.com/*", "https://*.reddit.com/*"],
+      "matches": ["https://*.quora.com/*", "https://*.reddit.com/*", "https://*.youtube.com/*"],
       "js": ["scripts/content.js"]
     }
   ],
@@ -22,6 +22,7 @@
   ],
   "host_permissions": [
   "https://*.quora.com/*",
-  "https://*.reddit.com/*"
+  "https://*.reddit.com/*",
+  "https://*.youtube.com/*"
   ]
 }
