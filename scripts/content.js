@@ -100,7 +100,6 @@ function hideTargetElements() {
 
   // Get user preferences for hiding content
   chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts'], (result) => {
-    // console.log('User preferences:', result.youtubeShorts);
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
       hidePromotedRedditContent(result.promotedRedditContent);
@@ -115,6 +114,7 @@ function hideTargetElements() {
       // Hide all shorts sections on Youtube
       hideYoutubeShorts(result.youtubeShorts);
     }
+    return;
   });
 }
 
