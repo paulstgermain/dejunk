@@ -15,18 +15,18 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
   }
 
   // Check local storage for user preferences
-  chrome.storage.local.get(['hidePromotedRedditContent', 'hideSponsoredQuoraContent', 'hideYoutubeShorts'], (result) => {
+  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts'], (result) => {
     // If the user has enabled hiding promoted Reddit content, check the corresponding checkbox
-    if (result.hidePromotedRedditContent === true) {
-      document.getElementById('hidePromotedRedditContent').checked = true;
+    if (result.promotedRedditContent === true) {
+      document.getElementById('promotedRedditContent').checked = true;
     }
     // If the user has enabled hiding sponsored Quora content, check the corresponding checkbox
-    if (result.hideSponsoredQuoraContent === true) {
-      document.getElementById('hideSponsoredQuoraContent').checked = true;
+    if (result.sponsoredQuoraContent === true) {
+      document.getElementById('sponsoredQuoraContent').checked = true;
     }
     // If the user has enabled hiding YouTube Shorts, check the corresponding checkbox
-    if (result.hideYoutubeShorts === true) {
-      document.getElementById('hideYoutubeShorts').checked = true;
+    if (result.youtubeShorts === true) {
+      document.getElementById('youtubeShorts').checked = true;
     }
   });
 
