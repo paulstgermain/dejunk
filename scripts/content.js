@@ -78,7 +78,7 @@ function hideSponsoredQuoraContent(result) {
 function hideYoutubeShorts(result) {
   if (result === true) {
     // Hide all shorts sections on Youtube
-    const elements = document.querySelectorAll('ytd-reel-shelf-renderer');
+    const elements = document.querySelectorAll('ytd-reel-shelf-renderer, .ytd-rich-section-renderer');
     elements.forEach((el) => {
       el.style.display = 'none';
     });
