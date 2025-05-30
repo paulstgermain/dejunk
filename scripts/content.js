@@ -1,37 +1,37 @@
-function hidePromotedRedditContent(enabled) {
+function promotedRedditContent(enabled) {
   // When triggered, update user preferences in local storage
   if (enabled === true) {
-    chrome.storage.local.set({ hidePromotedRedditContent: true }, () => {
+    chrome.storage.local.set({ promotedRedditContent: true }, () => {
       console.log('Reddit promoted content hiding enabled');
     });
   } else if (enabled === false) {
-    chrome.storage.local.set({ hidePromotedRedditContent: false }, () => {
+    chrome.storage.local.set({ promotedRedditContent: false }, () => {
       console.log('Reddit promoted content hiding disabled');
     });
   }
 }
 
-function hideSponsoredQuoraContent(enabled) {
+function sponsoredQuoraContent(enabled) {
   // When triggered, update user preferences in local storage
   if (enabled === true) {
-    chrome.storage.local.set({ hideSponsoredQuoraContent: true }, () => {
+    chrome.storage.local.set({ sponsoredQuoraContent: true }, () => {
       console.log('Quora sponsored content hiding enabled');
     });
   } else if (enabled === false) {
-    chrome.storage.local.set({ hideSponsoredQuoraContent: false }, () => {
+    chrome.storage.local.set({ sponsoredQuoraContent: false }, () => {
       console.log('Quora sponsored content hiding disabled');
     });
   }
 }
 
-function hideYoutubeShorts(enabled) {
+function youtubeShorts(enabled) {
   // When triggered, update user preferences in local storage
   if (enabled === true) {
-    chrome.storage.local.set({ hideYoutubeShorts: true }, () => {
+    chrome.storage.local.set({ youtubeShorts: true }, () => {
       console.log('Youtube shorts hiding enabled');
     });
   } else if (enabled === false) {
-    chrome.storage.local.set({ hideYoutubeShorts: false }, () => {
+    chrome.storage.local.set({ youtubeShorts: false }, () => {
       console.log('Youtube shorts hiding disabled');
     });
   }
@@ -39,15 +39,54 @@ function hideYoutubeShorts(enabled) {
 
 // Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === 'hidePromotedRedditContent') {
-    hidePromotedRedditContent(message.enabled);
-  } else if (message.type === 'hideSponsoredQuoraContent') {
-    hideSponsoredQuoraContent(message.enabled);
-  } else if (message.type === 'hideYoutubeShorts') {
-    hideYoutubeShorts(message.enabled);
+  if (message.type === 'promotedRedditContent') {
+    promotedRedditContent(message.enabled);
+  } else if (message.type === 'sponsoredQuoraContent') {
+    sponsoredQuoraContent(message.enabled);
+  } else if (message.type === 'youtubeShorts') {
+    youtubeShorts(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
+
+function hidePromotedRedditContent(result) {
+  if (result === true) {
+    // Hide all 'promoted' content on Reddit
+    const elements = document.querySelectorAll('.promotedlink');
+    elements.forEach((el) => {
+      el.style.display = 'none';
+    });
+  } else if (result === false) {
+    // If the user has disabled hiding promoted content, do nothing
+    return;
+  }
+}
+
+function hideSponsoredQuoraContent(result) {
+  if (result === true) {
+    // Hide all 'sponsored' content on Quora
+    const elements = document.querySelectorAll('.dom_annotate_ad_promoted_answer');
+    elements.forEach((el) => {
+      el.style.display = 'none';
+    });
+  } else if (result === false) {
+    // If the user has disabled hiding sponsored content, do nothing
+    return;
+  }
+}
+
+function hideYoutubeShorts(result) {
+  if (result === true) {
+    // Hide all shorts sections on Youtube
+    const elements = document.querySelectorAll('ytd-reel-shelf-renderer');
+    elements.forEach((el) => {
+      el.style.display = 'none';
+    });
+  } else if (result === false) {
+    // If the user has disabled hiding Youtube Shorts, do nothing
+    return;
+  }
+}
 
 function hideTargetElements() {
   // Check user preferences in local storage for hiding content, 
@@ -60,42 +99,22 @@ function hideTargetElements() {
   }
 
   // Get user preferences for hiding content
-  chrome.storage.local.get(['hidePromotedRedditContent', 'hideSponsoredQuoraContent', 'hideYoutubeShorts'], (result) => {
-    console.log('User preferences:', result.hideYoutubeShorts);
-
-    if (location.href.includes('reddit.com') && result.hidePromotedRedditContent === true) {
+  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts'], (result) => {
+    if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
-      const elements = document.querySelectorAll('.promotedlink');
-      elements.forEach((el) => {
-        el.style.display = 'none';
-      });
-    } else if (result.hidePromotedRedditContent === false) {
-      // If the user has disabled hiding promoted content, do nothing
-      return;
+      hidePromotedRedditContent(result.promotedRedditContent);
     }
 
-    if (location.href.includes('quora.com') && result.hideSponsoredQuoraContent === true) {
+    if (location.href.includes('quora.com')) {
        // Hide all 'sponsored' content on Quora
-      const elements = document.querySelectorAll('.dom_annotate_ad_promoted_answer');
-      elements.forEach((el) => {
-        el.style.display = 'none';
-      });
-    } else if (result.hideSponsoredQuoraContent === false) {
-      // If the user has disabled hiding sponsored content, do nothing
-      return;
+      hideSponsoredQuoraContent(result.sponsoredQuoraContent);
     }
 
-    if (location.href.includes('youtube.com') && result.hideYoutubeShorts === true) {
+    if (location.href.includes('youtube.com')) {
       // Hide all shorts sections on Youtube
-      const elements = document.querySelectorAll('ytd-reel-shelf-renderer');
-      elements.forEach((el) => {
-        el.style.display = 'none';
-      })
-    } else if (result.hideYoutubeShorts === false) {
-      // If the user has disabled hiding Youtube Shorts, do nothing
-      return;
+      hideYoutubeShorts(result.youtubeShorts);
     }
-
+    return;
   });
 }
 
