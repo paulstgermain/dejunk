@@ -116,14 +116,24 @@ function hideYoutubeShorts(result) {
   }
 }
 
+// WeakSet to keep track of hidden YouTube live elements
+// This allows us to avoid hiding the same element multiple times
+// Improves performance and prevents unnecessary DOM manipulation
+const hiddenYoutubeLives = new WeakSet();
+
 function hideYoutubeLives(result) {
   if (result === true) {
     // Hide all livestreams on YouTube
     const elements = document.querySelectorAll('.badge-style-type-live-now-alternate');
     for (const el of elements) {
       const element = el.closest('ytd-rich-item-renderer');
-      if (element) {
+      // Check if the element is already hidden
+      if (element && !hiddenYoutubeLives.has(element)) {
+        // Hide the element by adding a class
+        // This class is defined in the injected style above
         element.classList.add('dejunk-hide');
+        // Add the element to the WeakSet to track it
+        hiddenYoutubeLives.add(element);
       }
     }
   } else if (result === false) {
