@@ -37,14 +37,32 @@ function youtubeShorts(enabled) {
   }
 }
 
+function youtubeLives(enabled) {
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ youtubeLives: true }, () => {
+      console.log('Youtube lives hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ youtubeLives: false }, () => {
+      console.log('Youtube lives hiding disabled');
+    });
+  }
+}
+
 // Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'promotedRedditContent') {
     promotedRedditContent(message.enabled);
-  } else if (message.type === 'sponsoredQuoraContent') {
+  }
+  if (message.type === 'sponsoredQuoraContent') {
     sponsoredQuoraContent(message.enabled);
-  } else if (message.type === 'youtubeShorts') {
+  }
+  if (message.type === 'youtubeShorts') {
     youtubeShorts(message.enabled);
+  }
+  if (message.type === 'youtubeLives') {
+    youtubeLives(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
@@ -88,6 +106,22 @@ function hideYoutubeShorts(result) {
   }
 }
 
+function hideYoutubeLives(result) {
+  if (result === true) {
+    // Hide all livestreams on YouTube
+    const elements = document.querySelectorAll('.badge-style-type-live-now-alternate');
+    for (const el of elements) {
+      const element = el.closest('ytd-rich-item-renderer');
+      if (element) {
+        element.style.display = 'none';
+      }
+    }
+  } else if (result === false) {
+    // If the user has disabled hiding YouTube Lives, do nothing
+    return;
+  }
+}
+
 function hideTargetElements() {
   // Check user preferences in local storage for hiding content, 
   // and hide elements accordingly.
@@ -99,7 +133,7 @@ function hideTargetElements() {
   }
 
   // Get user preferences for hiding content
-  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts'], (result) => {
+  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives'], (result) => {
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
       hidePromotedRedditContent(result.promotedRedditContent);
@@ -113,6 +147,8 @@ function hideTargetElements() {
     if (location.href.includes('youtube.com')) {
       // Hide all shorts sections on Youtube
       hideYoutubeShorts(result.youtubeShorts);
+      // Hide all livestreams on YouTube
+      hideYoutubeLives(result.youtubeLives);
     }
     return;
   });
@@ -122,9 +158,21 @@ function hideTargetElements() {
 // Hide elements based on user preferences when the content script is loaded
 hideTargetElements();
 
+let liveScanTimeout = null;
+
+function scheduleHideTargetElements() {
+  if (liveScanTimeout) {
+    clearTimeout(liveScanTimeout);
+  }
+
+  liveScanTimeout = setTimeout(() => {
+    hideTargetElements();
+  }, 1000);
+}
+
 // Use MutationObserver to watch for changes in the DOM and hide elements accordingly
 const observer = new MutationObserver(() => {
-  hideTargetElements();
+  scheduleHideTargetElements();
 });
 
 observer.observe(document.body, {
