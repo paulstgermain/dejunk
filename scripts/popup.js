@@ -15,7 +15,7 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
   }
 
   // Check local storage for user preferences
-  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts'], (result) => {
+  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives'], (result) => {
     // If the user has enabled hiding promoted Reddit content, check the corresponding checkbox
     if (result.promotedRedditContent === true) {
       document.getElementById('promotedRedditContent').checked = true;
@@ -27,6 +27,10 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
     // If the user has enabled hiding YouTube Shorts, check the corresponding checkbox
     if (result.youtubeShorts === true) {
       document.getElementById('youtubeShorts').checked = true;
+    }
+    // If the user has enabled hiding YouTube Lives, check the corresponding checkbox
+    if (result.youtubeLives === true) {
+      document.getElementById('youtubeLives').checked = true;
     }
   });
 
