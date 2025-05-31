@@ -1,3 +1,13 @@
+if (!document.getElementById('dejunk-style')) {
+  const style = document.createElement('style');
+  style.id = 'dejunk-style';
+  style.textContent = `
+    .dejunk-hide {
+      display: none !important;
+    }`;
+  document.head.appendChild(style);
+}
+
 function promotedRedditContent(enabled) {
   // When triggered, update user preferences in local storage
   if (enabled === true) {
@@ -113,7 +123,7 @@ function hideYoutubeLives(result) {
     for (const el of elements) {
       const element = el.closest('ytd-rich-item-renderer');
       if (element) {
-        element.style.display = 'none';
+        element.classList.add('dejunk-hide');
       }
     }
   } else if (result === false) {
