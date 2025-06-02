@@ -158,6 +158,31 @@ function hideYoutubeLives(result) {
   }
 }
 
+const hiddenLinkedinPromoted = new WeakSet();
+
+function hideLinkedinPromoted(result) {
+  if (result === true) {
+    // Hide all promoted posts on LinkedIn
+
+    const elements = document.querySelectorAll('span[aria-hidden="true"]');
+    for (const el of elements) {
+      // Check if the element contains the text "Promoted"
+      if (el.textContent.includes('Promoted')) {
+        // Get the closest parent element that has a data-id attribute
+        const parentElement = el.closest('div[data-id]');
+
+        if (parentElement && !hiddenLinkedinPromoted.has(parentElement)) {
+          parentElement.classList.add('dejunk-hide');
+          hiddenLinkedinPromoted.add(parentElement);
+        }
+      }
+    }
+  } else if (result === false) {
+    // If the user has disabled hiding promoted posts, do nothing
+    return;
+  }
+}
+
 function hideTargetElements() {
   // Check user preferences in local storage for hiding content, 
   // and hide elements accordingly.
@@ -169,7 +194,7 @@ function hideTargetElements() {
   }
 
   // Get user preferences for hiding content
-  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives'], (result) => {
+  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted'], (result) => {
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
       hidePromotedRedditContent(result.promotedRedditContent);
@@ -185,6 +210,11 @@ function hideTargetElements() {
       hideYoutubeShorts(result.youtubeShorts);
       // Hide all livestreams on YouTube
       hideYoutubeLives(result.youtubeLives);
+    }
+
+    if (location.href.includes('linkedin.com')) {
+      // Hide all promoted posts on LinkedIn
+      hideLinkedinPromoted(result.linkedinPromoted);
     }
     return;
   });
@@ -203,7 +233,7 @@ function scheduleHideTargetElements() {
 
   liveScanTimeout = setTimeout(() => {
     hideTargetElements();
-  }, 1000);
+  }, 500);
 }
 
 // Use MutationObserver to watch for changes in the DOM and hide elements accordingly
