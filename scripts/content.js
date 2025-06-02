@@ -60,6 +60,19 @@ function youtubeLives(enabled) {
   }
 }
 
+function linkedinPromoted(enabled) {
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ linkedinPromoted: true }, () => {
+      console.log('LinkedIn promoted content hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ linkedinPromoted: false }, () => {
+      console.log('LinkedIn promoted content hiding disabled');
+    });
+  }
+}
+
 // Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'promotedRedditContent') {
@@ -73,6 +86,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === 'youtubeLives') {
     youtubeLives(message.enabled);
+  }
+  if (message.type === 'linkedinPromoted') {
+    linkedinPromoted(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
