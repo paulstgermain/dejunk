@@ -42,3 +42,17 @@ For example, `feature/short_title_describing_feature` for a new feature, or `bug
 **All PRs will be reviewed by the repository owner before they will be accepted and merged.**
 
 ## Screenshots
+![Screenshot 2025-06-01 at 7 11 48 PM](https://github.com/user-attachments/assets/d11f84ec-d812-49fc-aa22-eddd9cf22e02)
+_The Dejunk extension running on YouTube, 'Hide Shorts Sections' feature disabled, with a 'Shorts section' showing._
+
+![Screenshot 2025-06-01 at 7 13 58 PM](https://github.com/user-attachments/assets/543a811c-d8ba-410f-8e43-8df16c787941)
+_The Dejunk extension running on YouTube, 'Hide Shorts Sections' feature enabled, with a 'Shorts section' hidden._
+
+![Screenshot 2025-06-01 at 8 11 11 PM](https://github.com/user-attachments/assets/b47bf1c2-f2ff-4a30-807c-5542ce05d247)
+_The Dejunk extension running on Reddit, 'Hide Sponsored Posts' feature disabled, with a promoted post showing._
+
+![Screenshot 2025-06-01 at 8 11 55 PM](https://github.com/user-attachments/assets/631f855d-995b-46f3-8c0f-eaf28558c005)
+_The Dejunk extension running on Reddit, 'Hide Sponsored Posts' feature enabled, with a promoted post hidden._
+
+![Screenshot 2025-06-01 at 7 09 57 PM](https://github.com/user-attachments/assets/fa55bdd2-a68e-4ee4-875e-ef0b2945baab)
+_The Dejunk extension running on Wikipedia, showing how it disables itself on unsupported websites._
