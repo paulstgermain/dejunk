@@ -21,7 +21,8 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
       'youtubeShorts',
       'youtubeLives' ,
       'linkedinPromoted',
-      'linkedinNews'
+      'linkedinNews',
+      'linkedinSideAds'
     ], (result) => {
     // If the user has enabled hiding promoted Reddit content, check the corresponding checkbox
     if (result.promotedRedditContent === true) {
@@ -46,6 +47,10 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
     // If the user has enabled hiding LinkedIn News, check the corresponding checkbox
     if (result.linkedinNews === true) {
       document.getElementById('linkedinNews').checked = true;
+    }
+    // If the user has enabled hiding LinkedIn Side Ads, check the corresponding checkbox
+    if (result.linkedinSideAds === true) {
+      document.getElementById('linkedinSideAds').checked = true;
     }
   });
 
