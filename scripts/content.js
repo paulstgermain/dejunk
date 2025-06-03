@@ -199,6 +199,20 @@ function hideLinkedinPromoted(result) {
   }
 }
 
+function hideLinkedinNews(result) {
+  if (result === true) {
+    const element = document.getElementById('feed-news-module');
+    if (element) {
+      const parentElement = element.closest('.mb2');
+      parentElement.classList.add('dejunk-hide');
+    }
+    
+  } else if (result === false) {
+    // If the user has disabled hiding LinkedIn News, do nothing
+    return;
+  }
+}
+
 function hideTargetElements() {
   // Check user preferences in local storage for hiding content, 
   // and hide elements accordingly.
@@ -210,7 +224,7 @@ function hideTargetElements() {
   }
 
   // Get user preferences for hiding content
-  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted', 'linkedNews'], (result) => {
+  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted', 'linkedinNews'], (result) => {
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
       hidePromotedRedditContent(result.promotedRedditContent);
@@ -231,6 +245,8 @@ function hideTargetElements() {
     if (location.href.includes('linkedin.com')) {
       // Hide all promoted posts on LinkedIn
       hideLinkedinPromoted(result.linkedinPromoted);
+      // Hide LinkedIn News
+      hideLinkedinNews(result.linkedinNews);
     }
     return;
   });
