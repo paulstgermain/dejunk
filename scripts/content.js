@@ -73,6 +73,19 @@ function linkedinPromoted(enabled) {
   }
 }
 
+function linkedinNews(enabled) {
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ linkedinNews: true }, () => {
+      console.log('LinkedIn news hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ linkedinNews: false }, () => {
+      console.log('LinkedIn news hiding disabled');
+    });
+  }
+}
+
 // Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'promotedRedditContent') {
@@ -89,6 +102,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === 'linkedinPromoted') {
     linkedinPromoted(message.enabled);
+  }
+  if (message.type === 'linkedinNews') {
+    linkedinNews(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
@@ -183,6 +199,20 @@ function hideLinkedinPromoted(result) {
   }
 }
 
+function hideLinkedinNews(result) {
+  if (result === true) {
+    const element = document.getElementById('feed-news-module');
+    if (element) {
+      const parentElement = element.closest('.mb2');
+      parentElement.classList.add('dejunk-hide');
+    }
+    
+  } else if (result === false) {
+    // If the user has disabled hiding LinkedIn News, do nothing
+    return;
+  }
+}
+
 function hideTargetElements() {
   // Check user preferences in local storage for hiding content, 
   // and hide elements accordingly.
@@ -194,7 +224,7 @@ function hideTargetElements() {
   }
 
   // Get user preferences for hiding content
-  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted'], (result) => {
+  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted', 'linkedinNews'], (result) => {
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
       hidePromotedRedditContent(result.promotedRedditContent);
@@ -215,6 +245,8 @@ function hideTargetElements() {
     if (location.href.includes('linkedin.com')) {
       // Hide all promoted posts on LinkedIn
       hideLinkedinPromoted(result.linkedinPromoted);
+      // Hide LinkedIn News
+      hideLinkedinNews(result.linkedinNews);
     }
     return;
   });

@@ -15,7 +15,14 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
   }
 
   // Check local storage for user preferences
-  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted'], (result) => {
+  chrome.storage.local.get([
+      'promotedRedditContent',
+      'sponsoredQuoraContent',
+      'youtubeShorts',
+      'youtubeLives' ,
+      'linkedinPromoted',
+      'linkedinNews'
+    ], (result) => {
     // If the user has enabled hiding promoted Reddit content, check the corresponding checkbox
     if (result.promotedRedditContent === true) {
       document.getElementById('promotedRedditContent').checked = true;
@@ -35,6 +42,10 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
     // If the user has enabled hiding promoted LinkedIn posts, check the corresponding checkbox
     if (result.linkedinPromoted === true) {
       document.getElementById('linkedinPromoted').checked = true;
+    }
+    // If the user has enabled hiding LinkedIn News, check the corresponding checkbox
+    if (result.linkedinNews === true) {
+      document.getElementById('linkedinNews').checked = true;
     }
   });
 
