@@ -86,6 +86,19 @@ function linkedinNews(enabled) {
   }
 }
 
+function linkedinSideAds(enabled) {
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ linkedinSideAds: true }, () => {
+      console.log('LinkedIn side ads hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ linkedinSideAds: false }, () => {
+      console.log('LinkedIn side ads hiding disabled');
+    });
+  }
+}
+
 // Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'promotedRedditContent') {
@@ -105,6 +118,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === 'linkedinNews') {
     linkedinNews(message.enabled);
+  }
+  if (message.type === 'linkedinSideAds') {
+    linkedinSideAds(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
@@ -213,6 +229,19 @@ function hideLinkedinNews(result) {
   }
 }
 
+function hideLinkedinSideAds(result) {
+  if (result === true) {
+    // Hide all side ads on LinkedIn
+    const element = document.querySelector('.ad-banner-container');
+    if (element) {
+      element.classList.add('dejunk-hide');
+    }
+  } else if (result === false) {
+    // If the user has disabled hiding LinkedIn side ads, do nothing
+    return;
+  }
+}
+
 function hideTargetElements() {
   // Check user preferences in local storage for hiding content, 
   // and hide elements accordingly.
@@ -224,7 +253,7 @@ function hideTargetElements() {
   }
 
   // Get user preferences for hiding content
-  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted', 'linkedinNews'], (result) => {
+  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted', 'linkedinNews', 'linkedinSideAds'], (result) => {
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
       hidePromotedRedditContent(result.promotedRedditContent);
@@ -247,6 +276,8 @@ function hideTargetElements() {
       hideLinkedinPromoted(result.linkedinPromoted);
       // Hide LinkedIn News
       hideLinkedinNews(result.linkedinNews);
+      // Hide LinkedIn Side Ads
+      hideLinkedinSideAds(result.linkedinSideAds);
     }
     return;
   });
