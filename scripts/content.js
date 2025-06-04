@@ -99,6 +99,19 @@ function linkedinSideAds(enabled) {
   }
 }
 
+function linkedinPromoJobs(enabled) {
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ linkedinPromoJobs: true }, () => {
+      console.log('LinkedIn promoted jobs hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ linkedinPromoJobs: false }, () => {
+      console.log('LinkedIn promoted jobs hiding disabled');
+    });
+  }
+}
+
 // Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'promotedRedditContent') {
@@ -121,6 +134,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === 'linkedinSideAds') {
     linkedinSideAds(message.enabled);
+  }
+  if (message.type === 'linkedinPromoJobs') {
+    linkedinPromoJobs(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
@@ -242,6 +258,37 @@ function hideLinkedinSideAds(result) {
   }
 }
 
+const hiddenLinkedinPromoJobs = new WeakSet();
+
+function hideLinkedinPromoJobs(result) {
+  if (result === true) {
+  // Hide all promoted jobs on LinkedIn
+    const elements = document.querySelectorAll('span[dir]');
+
+    elements.forEach((el) => {
+      if (el.textContent.includes('Promoted')) {
+        // Select promoted job elements on search results page
+        const parentElement = el.closest('li[data-occludable-job-id]');
+        // Select promoted job elements on main job page
+        const parentElement2 = el.closest('li.discovery-templates-entity-item')
+
+        if (parentElement && !hiddenLinkedinPromoJobs.has(parentElement)) {
+          parentElement.classList.add('dejunk-hide');
+          hiddenLinkedinPromoJobs.add(parentElement);
+        }
+
+        if (parentElement2 && !hiddenLinkedinPromoJobs.has(parentElement2)) {
+          parentElement2.classList.add('dejunk-hide');
+          hiddenLinkedinPromoJobs.add(parentElement2);
+        }
+      }
+    });
+  } else if (result === false) {
+    // If the user has disabled hiding LinkedIn promoted jobs, do nothing
+    return;
+  }
+}
+
 function hideTargetElements() {
   // Check user preferences in local storage for hiding content, 
   // and hide elements accordingly.
@@ -253,7 +300,16 @@ function hideTargetElements() {
   }
 
   // Get user preferences for hiding content
-  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted', 'linkedinNews', 'linkedinSideAds'], (result) => {
+  chrome.storage.local.get([
+      'promotedRedditContent',
+      'sponsoredQuoraContent',
+      'youtubeShorts',
+      'youtubeLives',
+      'linkedinPromoted',
+      'linkedinNews',
+      'linkedinSideAds',
+      'linkedinPromoJobs'
+    ], (result) => {
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
       hidePromotedRedditContent(result.promotedRedditContent);
@@ -278,6 +334,8 @@ function hideTargetElements() {
       hideLinkedinNews(result.linkedinNews);
       // Hide LinkedIn Side Ads
       hideLinkedinSideAds(result.linkedinSideAds);
+      // Hide LinkedIn Promoted Jobs
+      hideLinkedinPromoJobs(result.linkedinPromoJobs);
     }
     return;
   });
