@@ -258,6 +258,37 @@ function hideLinkedinSideAds(result) {
   }
 }
 
+const hiddenLinkedinPromoJobs = new WeakSet();
+
+function hideLinkedinPromoJobs(result) {
+  if (result === true) {
+  // Hide all promoted jobs on LinkedIn
+    const elements = document.querySelectorAll('span[dir]');
+
+    elements.forEach((el) => {
+      if (el.textContent.includes('Promoted')) {
+        // Select promoted job elements on search results page
+        const parentElement = el.closest('li[data-occludable-job-id]');
+        // Select promoted job elements on main job page
+        const parentElement2 = el.closest('li.discovery-templates-entity-item')
+
+        if (parentElement && !hiddenLinkedinPromoJobs.has(parentElement)) {
+          parentElement.classList.add('dejunk-hide');
+          hiddenLinkedinPromoJobs.add(parentElement);
+        }
+
+        if (parentElement2 && !hiddenLinkedinPromoJobs.has(parentElement2)) {
+          parentElement2.classList.add('dejunk-hide');
+          hiddenLinkedinPromoJobs.add(parentElement2);
+        }
+      }
+    });
+  } else if (result === false) {
+    // If the user has disabled hiding LinkedIn promoted jobs, do nothing
+    return;
+  }
+}
+
 function hideTargetElements() {
   // Check user preferences in local storage for hiding content, 
   // and hide elements accordingly.
@@ -277,6 +308,7 @@ function hideTargetElements() {
       'linkedinPromoted',
       'linkedinNews',
       'linkedinSideAds',
+      'linkedinPromoJobs'
     ], (result) => {
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
@@ -302,6 +334,8 @@ function hideTargetElements() {
       hideLinkedinNews(result.linkedinNews);
       // Hide LinkedIn Side Ads
       hideLinkedinSideAds(result.linkedinSideAds);
+      // Hide LinkedIn Promoted Jobs
+      hideLinkedinPromoJobs(result.linkedinPromoJobs);
     }
     return;
   });
