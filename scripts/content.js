@@ -99,6 +99,19 @@ function linkedinSideAds(enabled) {
   }
 }
 
+function linkedinPromoJobs(enabled) {
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ linkedinPromoJobs: true }, () => {
+      console.log('LinkedIn promoted jobs hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ linkedinPromoJobs: false }, () => {
+      console.log('LinkedIn promoted jobs hiding disabled');
+    });
+  }
+}
+
 // Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'promotedRedditContent') {
@@ -121,6 +134,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === 'linkedinSideAds') {
     linkedinSideAds(message.enabled);
+  }
+  if (message.type === 'linkedinPromoJobs') {
+    linkedinPromoJobs(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
@@ -253,7 +269,15 @@ function hideTargetElements() {
   }
 
   // Get user preferences for hiding content
-  chrome.storage.local.get(['promotedRedditContent', 'sponsoredQuoraContent', 'youtubeShorts', 'youtubeLives', 'linkedinPromoted', 'linkedinNews', 'linkedinSideAds'], (result) => {
+  chrome.storage.local.get([
+      'promotedRedditContent',
+      'sponsoredQuoraContent',
+      'youtubeShorts',
+      'youtubeLives',
+      'linkedinPromoted',
+      'linkedinNews',
+      'linkedinSideAds',
+    ], (result) => {
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
       hidePromotedRedditContent(result.promotedRedditContent);
