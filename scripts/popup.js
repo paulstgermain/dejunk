@@ -20,6 +20,7 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
       'sponsoredQuoraContent',
       'youtubeShorts',
       'youtubeLives' ,
+      'youtubeSponsored',
       'linkedinPromoted',
       'linkedinNews',
       'linkedinSideAds',
@@ -40,6 +41,10 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
     // If the user has enabled hiding YouTube Lives, check the corresponding checkbox
     if (result.youtubeLives === true) {
       document.getElementById('youtubeLives').checked = true;
+    }
+    // If the user has enabled hiding YouTube Lives, check the corresponding checkbox
+    if (result.youtubeSponsored === true) {
+      document.getElementById('youtubeSponsored').checked = true;
     }
     // If the user has enabled hiding promoted LinkedIn posts, check the corresponding checkbox
     if (result.linkedinPromoted === true) {

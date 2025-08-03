@@ -60,6 +60,19 @@ function youtubeLives(enabled) {
   }
 }
 
+function youtubeSponsored(enabled) {
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ youtubeSponsored: true }, () => {
+      console.log('Youtube sponsored content hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ youtubeSponsored: false }, () => {
+      console.log('Youtube sponsored content hiding disabled');
+    });
+  }
+}
+
 function linkedinPromoted(enabled) {
   // When triggered, update user preferences in local storage
   if (enabled === true) {
@@ -125,6 +138,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === 'youtubeLives') {
     youtubeLives(message.enabled);
+  }
+  if (message.type === 'youtubeSponsored') {
+    youtubeSponsored(message.enabled);
   }
   if (message.type === 'linkedinPromoted') {
     linkedinPromoted(message.enabled);
@@ -198,6 +214,29 @@ function hideYoutubeLives(result) {
         element.classList.add('dejunk-hide');
         // Add the element to the WeakSet to track it
         hiddenYoutubeLives.add(element);
+      }
+    }
+  } else if (result === false) {
+    // If the user has disabled hiding YouTube Lives, do nothing
+    return;
+  }
+}
+
+const hiddenYoutubeSponsored = new WeakSet();
+
+function hideYoutubeSponsored(result) {
+  if (result === true) {
+    // Hide all sponsored ads on YouTube homepage
+    const elements = document.querySelectorAll('ytd-ad-slot-renderer');
+    for (const el of elements) {
+      const element = el.closest('ytd-rich-item-renderer');
+      // Check if the element is already hidden
+      if (element && !hiddenYoutubeSponsored.has(element)) {
+        // Hide the element by adding a class
+        // This class is defined in the injected style above
+        element.classList.add('dejunk-hide');
+        // Add the element to the WeakSet to track it
+        hiddenYoutubeSponsored.add(element);
       }
     }
   } else if (result === false) {
@@ -305,6 +344,7 @@ function hideTargetElements() {
       'sponsoredQuoraContent',
       'youtubeShorts',
       'youtubeLives',
+      'youtubeSponsored',
       'linkedinPromoted',
       'linkedinNews',
       'linkedinSideAds',
@@ -325,6 +365,7 @@ function hideTargetElements() {
       hideYoutubeShorts(result.youtubeShorts);
       // Hide all livestreams on YouTube
       hideYoutubeLives(result.youtubeLives);
+      hideYoutubeSponsored(result.youtubeSponsored);
     }
 
     if (location.href.includes('linkedin.com')) {
