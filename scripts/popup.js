@@ -24,7 +24,8 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
       'linkedinPromoted',
       'linkedinNews',
       'linkedinSideAds',
-      'linkedinPromoJobs'
+      'linkedinPromoJobs',
+      'fandomWikiAds'
     ], (result) => {
     // If the user has enabled hiding promoted Reddit content, check the corresponding checkbox
     if (result.promotedRedditContent === true) {
@@ -42,7 +43,7 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
     if (result.youtubeLives === true) {
       document.getElementById('youtubeLives').checked = true;
     }
-    // If the user has enabled hiding YouTube Lives, check the corresponding checkbox
+    // If the user has enabled hiding sponsored videos onYouTube, check the corresponding checkbox
     if (result.youtubeSponsored === true) {
       document.getElementById('youtubeSponsored').checked = true;
     }
@@ -61,6 +62,10 @@ chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
     // If the user has enabled hiding LinkedIn Promoted Jobs, check the corresponding checkbox
     if (result.linkedinPromoJobs === true) {
       document.getElementById('linkedinPromoJobs').checked = true;
+    }
+    // If the user has enabled hiding Fandom Wiki page Ads, check the corresponding checkbox
+    if (result.fandomWikiAds === true) {
+      document.getElementById('fandomWikiAds').checked = true;
     }
   });
 
