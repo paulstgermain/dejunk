@@ -125,6 +125,19 @@ function linkedinPromoJobs(enabled) {
   }
 }
 
+function fandomWikiAds(enabled) {
+  // When triggered, update user preferences in local storage
+  if (enabled === true) {
+    chrome.storage.local.set({ fandomWikiAds: true }, () => {
+      console.log('Fandom Wiki page ads hiding enabled');
+    });
+  } else if (enabled === false) {
+    chrome.storage.local.set({ fandomWikiAds: false }, () => {
+      console.log('Fandom Wiki page ads hiding disabled');
+    });
+  }
+}
+
 // Listen for messages from popup.js to toggle content hiding preferences
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'promotedRedditContent') {
@@ -153,6 +166,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === 'linkedinPromoJobs') {
     linkedinPromoJobs(message.enabled);
+  }
+  if (message.type === 'fandomWikiAds') {
+    fandomWikiAds(message.enabled);
   }
   // sendResponse({ status: 'success' });
 })
@@ -328,6 +344,20 @@ function hideLinkedinPromoJobs(result) {
   }
 }
 
+function hideFandomWikiAds(result) {
+  if (result === true) {
+    // Hide all ads on Fandom Wiki
+    const elements = document.querySelectorAll('.top_leaderboard-odyssey-wrapper, .top-ads-container, .bottom-ads-container, #rail-boxad-wrapper, #mid_boxad, #incontent_boxad, .sticky-modules-wrapper, .incontent_leaderboard');
+    elements.forEach((el) => {
+      // el.classList.add('dejunk-hide');
+      el.remove();
+    });
+  } else if (result === false) {
+    // If the user has disabled hiding Fandom Wiki ads, do nothing
+    return;
+  }
+}
+
 function hideTargetElements() {
   // Check user preferences in local storage for hiding content, 
   // and hide elements accordingly.
@@ -348,7 +378,8 @@ function hideTargetElements() {
       'linkedinPromoted',
       'linkedinNews',
       'linkedinSideAds',
-      'linkedinPromoJobs'
+      'linkedinPromoJobs',
+      'fandomWikiAds'
     ], (result) => {
     if (location.href.includes('reddit.com')) {
       // Hide all 'promoted' content on Reddit
@@ -378,6 +409,12 @@ function hideTargetElements() {
       // Hide LinkedIn Promoted Jobs
       hideLinkedinPromoJobs(result.linkedinPromoJobs);
     }
+
+    if (location.href.includes('fandom.com')) {
+      // Hide Fandom Wiki page Ads
+      hideFandomWikiAds(result.fandomWikiAds);
+    }
+
     return;
   });
 }

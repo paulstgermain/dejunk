@@ -17,7 +17,8 @@
         "https://*.quora.com/*",
         "https://*.reddit.com/*",
         "https://*.youtube.com/*",
-        "https://*.linkedin.com/*"
+        "https://*.linkedin.com/*",
+        "https://*.fandom.com/*"
       ],
       "js": ["scripts/content.js"]
     }
@@ -29,6 +30,7 @@
     "https://*.quora.com/*",
     "https://*.reddit.com/*",
     "https://*.youtube.com/*",
-    "https://*.linkedin.com/*"
+    "https://*.linkedin.com/*",
+    "https://*.fandom.com/*"
   ]
 }
