@@ -347,7 +347,7 @@ function hideLinkedinPromoJobs(result) {
 function hideFandomWikiAds(result) {
   if (result === true) {
     // Hide all ads on Fandom Wiki
-    const elements = document.querySelectorAll('.top_leaderboard-odyssey-wrapper, .top-ads-container, .bottom-ads-container, #rail-boxad-wrapper, #mid_boxad, #incontent_boxad, .sticky-modules-wrapper, .incontent_leaderboard');
+    const elements = document.querySelectorAll('.top_leaderboard-odyssey-wrapper, .top-ads-container, .bottom-ads-container, #rail-boxad-wrapper, #mid_boxad, #incontent_boxad, .sticky-modules-wrapper, .incontent_leaderboard, #top_boxad');
     elements.forEach((el) => {
       // el.classList.add('dejunk-hide');
       el.remove();
